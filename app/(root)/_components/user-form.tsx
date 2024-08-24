@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/select'
 import { SelectValue } from '@radix-ui/react-select'
 import { malumotlar } from '@/constanta'
+import { Separator } from '@/components/ui/separator'
 
 const defaultVal = {
 	name: '',
@@ -49,6 +50,15 @@ function UserForm() {
 	const [imageType, setImageType] = useState<string | null>(null)
 	const [tamomlagan, setTamomlagan] = useState<string[]>([''])
 	const [levelOfScience, setLevelOfScience] = useState<string[]>([''])
+	const [relatives, setRelatives] = useState([
+		{
+			name: '',
+			relationship: '',
+			address: '',
+			dateOfBirthAndPlace: '',
+			workplace: '',
+		},
+	])
 	function onUpload(e: ChangeEvent<HTMLInputElement>) {
 		const files = e.target.files
 		if (!files) return null
@@ -90,6 +100,36 @@ function UserForm() {
 		newLevelFields[index] = value
 		setLevelOfScience(newLevelFields)
 	}
+
+	const addRelative = () => {
+		setRelatives([
+			...relatives,
+			{
+				name: '',
+				relationship: '',
+				address: '',
+				dateOfBirthAndPlace: '',
+				workplace: '',
+			},
+		])
+	}
+	const removeRelative = (index: number) => {
+		const newRelatives = [...relatives]
+		newRelatives.splice(index, 1)
+		setRelatives(newRelatives)
+	}
+
+	const handleChange = (
+		index: number,
+		event: React.ChangeEvent<HTMLInputElement>
+	) => {
+		const { name, value } = event.target
+		const key = name as keyof (typeof newRelatives)[0]
+		const newRelatives = [...relatives]
+		newRelatives[index][key] = value
+		setRelatives(newRelatives)
+	}
+
 	const onSubmit = async (data: z.infer<typeof userSchema>) => {
 		if (!imageFile || !imageType) {
 			alert('Iltimos, rasmni yuklang!')
@@ -113,6 +153,7 @@ function UserForm() {
 			imageType,
 			jobData: finalJobData,
 			levelData: finalLevelData,
+			relatives,
 		})
 
 		const url = URL.createObjectURL(pdfBlob)
@@ -395,7 +436,7 @@ function UserForm() {
 									type='button'
 									onClick={() => removeLevelField(index)}
 									className='ml-2 hover:text-red-700'
-									variant={'outline'}
+									variant={'destructive'}
 								>
 									X
 								</Button>
@@ -451,7 +492,66 @@ function UserForm() {
 							</FormItem>
 						)}
 					></FormField>
+					<h2 className='mt-4'>Oila a&apos;zolari:</h2>
+					{relatives.map((relative, index) => (
+						<div key={index} className='flex flex-col gap-2'>
+							<Separator className='bg-blue-500 mt-4 h-1' />
+							<div className='flex items-center mt-4'>
+								<Input
+									name='relationship'
+									placeholder='Qarindoshlik darajasi'
+									value={relative.relationship}
+									onChange={e => handleChange(index, e)}
+									className='flex-1'
+								/>
+								<Button
+									type='button'
+									onClick={() => removeRelative(index)}
+									className='ml-2 hover:text-sky-700'
+									variant={'destructive'}
+								>
+									Olib tashlash
+								</Button>
+							</div>
+							<Input
+								name='name'
+								placeholder="Oila a'zosining ismi, familiyasi va sharifi"
+								value={relative.name}
+								onChange={e => handleChange(index, e)}
+								className='w-full mt-2'
+							/>
+							<Input
+								name='dateOfBirthAndPlace'
+								placeholder='Tugʻilgan yili va joyi (Misol: 1970-yil Samarqand vil)'
+								value={relative.dateOfBirthAndPlace}
+								onChange={e => handleChange(index, e)}
+								className='w-full mt-2'
+							/>
 
+							<Input
+								name='workplace'
+								placeholder='Ish joyi va lavozimi'
+								value={relative.workplace}
+								onChange={e => handleChange(index, e)}
+								className='w-full mt-2'
+							/>
+							<Input
+								name='address'
+								placeholder='Yashash manzili'
+								value={relative.address}
+								onChange={e => handleChange(index, e)}
+								className='w-full mt-2'
+							/>
+						</div>
+					))}
+					<Button
+						type='button'
+						onClick={addRelative}
+						className='w-full mt-4'
+						variant={'outline'}
+					>
+						Yangi oila a&apos;zosini qo&apos;shish
+					</Button>
 					<Button
 						type='submit'
 						className='mt-4 bg-blue-500 text-white py-2 px-4 rounded'

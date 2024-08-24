@@ -1,6 +1,30 @@
 // Wrap text function
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 
+function wrapTextPage2(
+	text: string,
+	maxWidth: number,
+	fontSize: number,
+	font: any
+): string[] {
+	const words = text.split(' ')
+	let lines: string[] = []
+	let currentLine = ''
+
+	words.forEach(word => {
+		const lineWidth = font.widthOfTextAtSize(currentLine + word, fontSize)
+		if (lineWidth <= maxWidth) {
+			currentLine += word + ' '
+		} else {
+			lines.push(currentLine.trim())
+			currentLine = word + ' '
+		}
+	})
+
+	lines.push(currentLine.trim())
+	return lines
+}
+
 function wrapText(
 	text: string,
 	maxWidth: number,
@@ -44,9 +68,17 @@ export async function generatePDF(formData: {
 	profissional: string
 	member: string
 	reward: string
+	relatives: {
+		name: string
+		relationship: string
+		address: string
+		dateOfBirthAndPlace: string
+		workplace: string
+	}[]
 }) {
 	const pdfDoc = await PDFDocument.create()
 	const page = pdfDoc.addPage([595.28, 841.89]) // A4 size
+	const page2 = pdfDoc.addPage([595.28, 841.89])
 
 	const fontSize = 14
 	const textFontSize = 12
@@ -56,6 +88,118 @@ export async function generatePDF(formData: {
 	const imageBytes = await fetch(formData.imageFile).then(res =>
 		res.arrayBuffer()
 	)
+
+	const headers = [
+		'Qarin-  doshligi',
+		'Familyasi, ismi va otasining ismi',
+		"Tug'ilgan yili va joyi",
+		'Ish joyi va lavozimi',
+		'Turar joyi',
+	]
+
+	const tableWidth = page2.getWidth() - 100 // Taking 50 units margin from each side
+	// const columnWidth = tableWidth / headers.length
+	const columnWidth = [60, 130, 130, 90, 90]
+	const tableStartX = 50
+	const tableStartY = page2.getHeight() - 150
+	let yPositionpage2 = tableStartY
+
+	// Draw headers
+	let currentX = tableStartX
+	headers.forEach(header => {
+		page2.drawText(header, {
+			x: currentX + 5, // Padding inside the cell
+			y: yPositionpage2,
+			size: fontSize - 2,
+			font: boldFont,
+			color: rgb(0, 0, 0),
+			maxWidth: columnWidth[headers.indexOf(header)] - 10, // Padding inside the cell
+		})
+		currentX += columnWidth[headers.indexOf(header)]
+	})
+
+	// Draw horizontal line over headers
+	yPositionpage2 -= fontSize + 5
+	page2.drawLine({
+		start: { x: tableStartX, y: yPositionpage2 + 34 },
+		end: { x: tableStartX + 5 + tableWidth, y: yPositionpage2 + 34 },
+		thickness: 1,
+		color: rgb(0, 0, 0),
+	})
+
+	// Draw horizontal line under headers
+	yPositionpage2 -= fontSize + 5
+	page2.drawLine({
+		start: { x: tableStartX, y: yPositionpage2 + 8 },
+		end: { x: tableStartX + 5 + tableWidth, y: yPositionpage2 + 8 },
+		thickness: 2,
+		color: rgb(0, 0, 0),
+	})
+
+	// Draw vertical lines for columns (header row)
+	currentX = tableStartX
+	for (let i = 0; i <= headers.length; i++) {
+		page2.drawLine({
+			start: { x: currentX, y: yPositionpage2 + fontSize + 39 },
+			end: { x: currentX, y: yPositionpage2 - 3 * fontSize }, // Adjust height accordingly
+			thickness: 1,
+			color: rgb(0, 0, 0),
+		})
+		currentX += columnWidth[i]
+	}
+
+	//Draw each relative's data in the table
+	yPositionpage2 -= 15 // Move down for the first row
+	formData.relatives.forEach(relative => {
+		let currentX = tableStartX
+		const relativeData = [
+			relative.relationship,
+			relative.name,
+			relative.dateOfBirthAndPlace,
+			relative.workplace,
+			relative.address,
+		]
+
+		relativeData.forEach((data, i) => {
+			const wrappedText = wrapTextPage2(
+				data,
+				columnWidth[i] - 10,
+				fontSize,
+				font
+			)
+			wrappedText.forEach((line, index) => {
+				page2.drawText(line, {
+					x: currentX + 5,
+					y: yPositionpage2 - index * (fontSize + 2), // Adjust line height
+					size: 11,
+					font: font,
+					color: rgb(0, 0, 0),
+				})
+			})
+			currentX += columnWidth[i]
+		})
+
+		// Draw horizontal line after each row
+		yPositionpage2 -= 3 * fontSize + 35
+		page2.drawLine({
+			start: { x: tableStartX, y: yPositionpage2 + fontSize },
+			end: { x: tableStartX + 5 + tableWidth, y: yPositionpage2 + fontSize },
+			thickness: 2,
+			color: rgb(0, 0, 0),
+		})
+
+		// Draw vertical line after each row
+		currentX = tableStartX
+		for (let i = 0; i <= headers.length; i++) {
+			page2.drawLine({
+				start: { x: currentX, y: yPositionpage2 + fontSize + 70 },
+				end: { x: currentX, y: yPositionpage2 + 5 }, // Adjust height accordingly
+				thickness: 1,
+				color: rgb(0, 0, 0),
+			})
+			currentX += columnWidth[i]
+		}
+	})
 
 	// Determine the image format and embed accordingly
 	let image
@@ -280,7 +424,7 @@ export async function generatePDF(formData: {
 		color: rgb(0, 0, 0),
 	})
 
-	let yLevel = yPos - 4 * alwaysTabs + 10
+	let yLevel = yPosition - wrappedText.height - 11 * alwaysTabs
 	const maxWidthofLevel = 250
 	formData.levelData.forEach(job => {
 		const wrappedJob = wrapText(job, maxWidthofLevel, font, textFontSize)
@@ -373,6 +517,33 @@ export async function generatePDF(formData: {
 			color: rgb(0, 0, 0),
 		})
 		yPosition -= textFontSize + 5 // Adjust y position for the next line
+	})
+
+	let yPosition2 = page2.getHeight() - 50 // Start position from the top
+
+	// Draw relatives title
+	page2.drawText(
+		`${formData.surname} ${formData.name}  ${formData.lastname}ning yaqin qarindoshlari haqida`,
+		{
+			x:
+				(page.getWidth() -
+					font.widthOfTextAtSize(
+						`${formData.name} ${formData.surname} ${formData.lastname}ning yaqin qarindoshlari haqida`,
+						fontSize
+					)) /
+				2,
+			y: yPosition2 - 50,
+			size: fontSize,
+			font: boldFont,
+			color: rgb(0, 0, 0),
+		}
+	)
+	page2.drawText(`MA'LUMOT:`, {
+		x: (page.getWidth() - font.widthOfTextAtSize("ma'lumot", fontSize)) / 2,
+		y: yPosition2 - fontSize - 58,
+		size: fontSize + 4,
+		font: boldFont,
+		color: rgb(0, 0, 0),
 	})
 
 	const pdfBytes = await pdfDoc.save()

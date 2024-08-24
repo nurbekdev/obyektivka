@@ -23,4 +23,5 @@ export const userSchema = z.object({
 	profissional: z.string().min(0),
 	member: z.string().min(3),
 	reward: z.string().min(0),
+	relatives: z.array(z.string().min(3)).optional(),
 })
