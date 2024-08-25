@@ -5,7 +5,7 @@ function Navbar() {
 	return (
 		<div className=' h-[8vh] bg-blue-100 w-full px-60 py-4'>
 			<div className='flex items-center justify-center gap-12 text-xl text-indigo-400 font-bold '>
-				<h1 className='hover:text-indigo-600'>Ma&apos;lumotnoma</h1>
+				{/* <h1 className='hover:text-indigo-600'>Ma&apos;lumotnoma</h1> */}
 
 				<div className='flex items-center justify-center gap-2 hover:text-indigo-600'>
 					<FileChartColumn />

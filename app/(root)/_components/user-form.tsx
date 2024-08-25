@@ -384,9 +384,9 @@ function UserForm() {
 									type='button'
 									onClick={() => removeJobField(index)}
 									className='ml-2 hover:text-red-700'
-									variant={'outline'}
+									variant={'destructive'}
 								>
-									X
+									Olib tashlash
 								</Button>
 							</div>
 						))}
@@ -438,7 +438,7 @@ function UserForm() {
 									className='ml-2 hover:text-red-700'
 									variant={'destructive'}
 								>
-									X
+									Olib tashlash
 								</Button>
 							</div>
 						))}
