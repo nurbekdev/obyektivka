@@ -386,7 +386,7 @@ function UserForm() {
 									className='ml-2 hover:text-red-700'
 									variant={'destructive'}
 								>
-									Olib tashlash
+									X
 								</Button>
 							</div>
 						))}
@@ -438,7 +438,7 @@ function UserForm() {
 									className='ml-2 hover:text-red-700'
 									variant={'destructive'}
 								>
-									Olib tashlash
+									X
 								</Button>
 							</div>
 						))}
