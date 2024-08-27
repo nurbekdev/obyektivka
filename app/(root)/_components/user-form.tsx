@@ -171,12 +171,12 @@ function UserForm() {
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
 					<h1 className='mb-4 font-bold'>Ma&apos;lumotlaringizni kiriting:</h1>
-					<div className='flex items-center justify-center gap-4'>
+					<div className='flex flex-col items-center justify-center gap-2'>
 						<FormField
 							control={form.control}
 							name='surname'
 							render={({ field }) => (
-								<FormItem className='mt-4'>
+								<FormItem className='mt-2 w-full'>
 									<FormLabel>
 										Familiya <span className='text-red-500'>*</span>
 									</FormLabel>
@@ -191,7 +191,7 @@ function UserForm() {
 							control={form.control}
 							name='name'
 							render={({ field }) => (
-								<FormItem className='mt-4'>
+								<FormItem className='mt-2 w-full'>
 									<FormLabel>
 										Ism <span className='text-red-500'>*</span>
 									</FormLabel>
@@ -206,7 +206,7 @@ function UserForm() {
 							control={form.control}
 							name='lastname'
 							render={({ field }) => (
-								<FormItem className='mt-4'>
+								<FormItem className='mt-2 w-full'>
 									<FormLabel>
 										Sharif <span className='text-red-500'>*</span>
 									</FormLabel>
