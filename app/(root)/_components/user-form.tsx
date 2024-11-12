@@ -181,7 +181,7 @@ function UserForm() {
 										Familiya <span className='text-red-500'>*</span>
 									</FormLabel>
 									<FormControl>
-										<Input placeholder='Misol: Qodirov' {...field} />
+										<Input placeholder='Misol: Pulatov' {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -196,7 +196,7 @@ function UserForm() {
 										Ism <span className='text-red-500'>*</span>
 									</FormLabel>
 									<FormControl>
-										<Input placeholder='Misol: Botir' {...field} />
+										<Input placeholder='Misol: Nurbek' {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -211,7 +211,7 @@ function UserForm() {
 										Sharif <span className='text-red-500'>*</span>
 									</FormLabel>
 									<FormControl>
-										<Input placeholder='Misol: Bahodirovich' {...field} />
+										<Input placeholder='Misol: Xayrullayich' {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -257,7 +257,7 @@ function UserForm() {
 								</FormLabel>
 								<FormControl>
 									<Input
-										placeholder="Samarqand Davlat Universiteti matematika fakulteti amaliy matematika yo'nalishi talabasi"
+										placeholder="Toshkent Milliy Tadqidot universitite sun'iy intellekt fakulteti talabasi"
 										{...field}
 									/>
 								</FormControl>
@@ -275,7 +275,7 @@ function UserForm() {
 								</FormLabel>
 								<FormControl>
 									<Input
-										placeholder='Misol: 15.12.1999  kun/oy/yil'
+										placeholder='Misol: 05.06.2004  kun/oy/yil'
 										{...field}
 									/>
 								</FormControl>
@@ -293,7 +293,7 @@ function UserForm() {
 								</FormLabel>
 								<FormControl>
 									<Input
-										placeholder='Misol: Samarqand viloyati, Jomboy tumani'
+										placeholder='Misol: Qashqadaryo viloyati, Shahrisabz shahri'
 										{...field}
 									/>
 								</FormControl>
@@ -374,7 +374,7 @@ function UserForm() {
 								<Input
 									value={job}
 									placeholder={
-										'Misol: Samarqand Davlat Universiteti (bakalavriyat)'
+										'Misol: Toshkent Milliy Tadqiqdot Universitite (bakalavriyat)'
 									}
 									onChange={e => handleJobChange(index, e.target.value)}
 									className='flex-1'
@@ -522,7 +522,7 @@ function UserForm() {
 							/>
 							<Input
 								name='dateOfBirthAndPlace'
-								placeholder='Tugʻilgan yili va joyi (Misol: 1970-yil Samarqand vil)'
+								placeholder='Tugʻilgan yili va joyi (Misol: 1980-yil Qashqadaryo vil)'
 								value={relative.dateOfBirthAndPlace}
 								onChange={e => handleChange(index, e)}
 								className='w-full mt-2'
